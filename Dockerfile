@@ -10,5 +10,5 @@ RUN mv /tools/rabbitmq-perf-test-${VERSION} /tools/rabbitmq-perf-test
 
 FROM anapsix/alpine-java:8
 ENV PATH /tools/rabbitmq-perf-test/bin:$PATH
-COPY --from=builder /tools/ .
+COPY --from=builder /tools/ /tools/
 ENTRYPOINT [ "runjava", "com.rabbitmq.perf.PerfTest" ]
