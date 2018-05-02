@@ -1,6 +1,6 @@
 FROM alpine AS builder
 
-ARG VERSION=2.1.0
+ARG VERSION=2.1.1
 
 RUN apk add --update curl 
 RUN mkdir /tools
