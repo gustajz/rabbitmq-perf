@@ -1,6 +1,16 @@
-FROM openjdk:8-jre
+FROM alpine AS builder
 
-RUN curl -O -L https://github.com/rabbitmq/rabbitmq-perf-test/releases/download/v2.1.0/rabbitmq-perf-test-2.1.0-bin.tar.gz && \
-    tar xvfz rabbitmq-perf-test-2.1.0-bin.tar.gz
+ARG VERSION=2.1.0
 
-ENTRYPOINT [ "rabbitmq-perf-test-2.1.0/bin/runjava", "com.rabbitmq.perf.PerfTest" ]
+RUN apk add --update curl 
+RUN printenv
+RUN mkdir /tools
+RUN curl -O -L https://github.com/rabbitmq/rabbitmq-perf-test/releases/download/v${VERSION}/rabbitmq-perf-test-${VERSION}-bin.tar.gz
+RUN tar xvfz rabbitmq-perf-test-${VERSION}-bin.tar.gz -C /tools
+RUN mv /tools/rabbitmq-perf-test-${VERSION} /tools/rabbitmq-perf-test
+
+FROM anapsix/alpine-java:8
+WORKDIR /tools
+ENV PATH /tools/rabbitmq-perf-test/bin:$PATH
+COPY --from=builder /tools/ .
+ENTRYPOINT [ "runjava", "com.rabbitmq.perf.PerfTest" ]
